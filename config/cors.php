@@ -17,13 +17,13 @@ return [
 
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => config('environment.settings.' . app()->environment() . '.cors.allowed_methods'),
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => config('environment.settings.' . app()->environment() . '.cors.allowed_origins'),
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => config('environment.settings.' . app()->environment() . '.cors.allowed_headers'),
 
     'exposed_headers' => [],
 

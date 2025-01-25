@@ -22,5 +22,11 @@ class AppServiceProvider extends ServiceProvider
         if (config('ssl.force_ssl')) {
             \URL::forceScheme('https');
         }
+
+        // Apply environment-specific configurations
+        config([
+            'app.debug' => config('environment.settings.' . app()->environment() . '.debug'),
+            'cache.ttl' => config('environment.settings.' . app()->environment() . '.cache_ttl'),
+        ]);
     }
 }
