@@ -48,7 +48,5 @@ return [
     | Environment Detection
     |--------------------------------------------------------------------------
     */
-    'current' => function () {
-        return app()->environment();
-    },
+    'current' => env('APP_ENV', 'local'),
 ];
