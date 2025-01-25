@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: manaable-hr-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - manaable-network
+
+  # Nginx Service
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    container_name: manaable-hr-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - manaable-network
+    depends_on:
+      - app
+
+  # MySQL Service
+  db:
+    image: mysql:8.0
+    container_name: manaable-hr-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_USER: ${DB_USERNAME:-laravel}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - manaable-network
+
+networks:
+  manaable-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
