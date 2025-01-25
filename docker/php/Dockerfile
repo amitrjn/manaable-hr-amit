@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -25,5 +25,10 @@ WORKDIR /var/www
 # Copy existing application directory
 COPY . /var/www
 
+# Configure Git to trust the directory
+RUN git config --system --add safe.directory /var/www
+
 # Set permissions
-RUN chown -R www-data:www-data /var/www
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage \
+    && chmod -R 775 /var/www/bootstrap/cache
