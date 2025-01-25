@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PHP Service
   app:
@@ -11,8 +9,24 @@ services:
     working_dir: /var/www/
     volumes:
       - ./:/var/www
+      - ./storage:/var/www/storage
+      - ./bootstrap/cache:/var/www/bootstrap/cache
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_KEY: ${APP_KEY}
+      DB_HOST: db
+      DB_DATABASE: ${DB_DATABASE:-laravel}
+      DB_USERNAME: ${DB_USERNAME:-laravel}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      REDIS_HOST: redis
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
     networks:
       - manaable-network
+    depends_on:
+      - redis
 
   # Nginx Service
   nginx:
@@ -47,6 +61,16 @@ services:
       - dbdata:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - manaable-network
+
+  # Redis Service
+  redis:
+    image: redis:alpine
+    container_name: manaable-hr-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
     networks:
       - manaable-network
 
